@@ -1,5 +1,7 @@
 package com.example.SampleProject.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 
 @Entity
@@ -13,7 +15,8 @@ public class Customer {
     private String password;
     private String address;
 
-    @OneToOne
+    @OneToOne(orphanRemoval = true)
+    @JsonManagedReference
     private Cart cart;
 
     public Customer(Customer customer) {
