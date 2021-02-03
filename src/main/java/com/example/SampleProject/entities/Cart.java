@@ -59,4 +59,8 @@ public class Cart {
     public void setCartItemSet(Set<CartItem> cartItemSet) {
         this.cartItemSet = cartItemSet;
     }
+
+    public void emptyCart() {
+
+    }
 }
