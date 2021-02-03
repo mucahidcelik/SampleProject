@@ -28,7 +28,7 @@ public class SampleProjectApplication {
 			http.csrf().disable()
 					.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
 					.authorizeRequests()
-					.antMatchers(HttpMethod.POST, "/login", "/register").permitAll()
+					.antMatchers(HttpMethod.POST, "/login", "/register","/loginSeller", "/registerSeller").permitAll()
 					.anyRequest().authenticated();
 
 		}

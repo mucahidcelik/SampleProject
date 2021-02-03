@@ -2,6 +2,7 @@ package com.example.SampleProject.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 
@@ -14,21 +15,30 @@ public class Item {
 
     private String name;
     private double price;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JsonBackReference(value = "seller")
+    private Seller seller;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JsonIgnoreProperties(value = {"applications", "hibernateLazyInitializer"})
-    @JsonBackReference
+    @JsonBackReference(value = "category")
     private Category category;
-
-
 
     public Item(String name, double price, Category category) {
         this.name = name;
-        this.price =price;
+        this.price = price;
         this.category = category;
     }
 
     public Item() {
+    }
+
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
     }
 
     public long getId() {
@@ -54,6 +64,7 @@ public class Item {
     public void setPrice(double price) {
         this.price = price;
     }
+
     public Category getCategory() {
         return category;
     }

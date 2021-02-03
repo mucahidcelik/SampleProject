@@ -2,14 +2,14 @@ package com.example.SampleProject.dtos;
 
 import org.springframework.web.bind.annotation.RequestParam;
 
-public class CustomerLoginDto {
+public class LoginDto {
     private Long id;
     private String password;
 
-    public CustomerLoginDto() {
+    public LoginDto() {
     }
 
-    public CustomerLoginDto(Long id, String password) {
+    public LoginDto(Long id, String password) {
         this.id = id;
         this.password = password;
     }

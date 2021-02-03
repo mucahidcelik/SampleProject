@@ -1,7 +1,7 @@
 package com.example.SampleProject.controllers;
 
 import com.example.SampleProject.dtos.CustomerDto;
-import com.example.SampleProject.dtos.CustomerLoginDto;
+import com.example.SampleProject.dtos.LoginDto;
 import com.example.SampleProject.entities.Cart;
 import com.example.SampleProject.entities.CartItem;
 import com.example.SampleProject.entities.Customer;
@@ -10,19 +10,13 @@ import com.example.SampleProject.repositories.CartItemRepository;
 import com.example.SampleProject.repositories.CartRepository;
 import com.example.SampleProject.repositories.CustomerRepository;
 import com.example.SampleProject.repositories.ItemRepository;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.example.SampleProject.security.TokenUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 public class CustomerController {
@@ -36,10 +30,10 @@ public class CustomerController {
     private ItemRepository items;
 
     @RequestMapping("/login")
-    public ResponseEntity<CustomerDto> login(@RequestBody CustomerLoginDto customerDto) {
-        Customer customer = customers.findById(customerDto.getId()).orElse(null);
-        if (customer != null && customer.getPassword().equals(customerDto.getPassword())) {
-            customer.setToken(getJWTToken(customer.getName()));
+    public ResponseEntity<CustomerDto> login(@RequestBody LoginDto loginDto) {
+        Customer customer = customers.findById(loginDto.getId()).orElse(null);
+        if (customer != null && customer.getPassword().equals(loginDto.getPassword())) {
+            customer.setToken(TokenUtility.getJWTToken(customer.getName()));
             customer.setLoggedIn(true);
             customers.save(customer);
             return new ResponseEntity<>(new CustomerDto(customer), HttpStatus.OK);
@@ -57,12 +51,11 @@ public class CustomerController {
         } else {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
-
     }
 
     @RequestMapping("/register")
     public ResponseEntity<CustomerDto> register(@RequestBody Customer customer) {
-        customer.setToken(getJWTToken(customer.getName()));
+        customer.setToken(TokenUtility.getJWTToken(customer.getName()));
         Customer customerSaveResult = customers.save(customer);
         Cart cartSaveResult = carts.save(new Cart(customerSaveResult));
         customerSaveResult.setCart(cartSaveResult);
@@ -114,7 +107,7 @@ public class CustomerController {
     }
 
     @RequestMapping("/editCustomer")
-    public ResponseEntity<Customer> editCustomer(@RequestBody Customer customer, @RequestHeader(name = "Authorization") String token){
+    public ResponseEntity<CustomerDto> editCustomer(@RequestBody Customer customer, @RequestHeader(name = "Authorization") String token){
         Customer c = customers.findById(customer.getCustomerId()).orElse(null);
         if(c!=null){
             if(c.getToken().equals(token)){
@@ -122,7 +115,7 @@ public class CustomerController {
                 c.setName(customer.getName());
                 c.setPassword(customer.getPassword());
                 Customer saveResult = customers.save(c);
-                return new ResponseEntity<>(saveResult, HttpStatus.OK);
+                return new ResponseEntity<>(new CustomerDto(saveResult), HttpStatus.OK);
             }
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
@@ -145,24 +138,4 @@ public class CustomerController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    private String getJWTToken(String username) {
-        String secretKey = "mySecretKey";
-        List<GrantedAuthority> grantedAuthorities = AuthorityUtils
-                .commaSeparatedStringToAuthorityList("ROLE_USER");
-
-        String token = Jwts
-                .builder()
-                .setId("sample")
-                .setSubject(username)
-                .claim("authorities",
-                        grantedAuthorities.stream()
-                                .map(GrantedAuthority::getAuthority)
-                                .collect(Collectors.toList()))
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 600000))
-                .signWith(SignatureAlgorithm.HS512,
-                        secretKey.getBytes()).compact();
-
-        return "Bearer " + token;
-    }
 }

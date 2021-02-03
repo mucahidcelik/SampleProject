@@ -13,7 +13,7 @@ public class Category {
     private long id;
     private String name;
     @OneToMany(orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference(value = "category")
     private Set<Item> items;
 
     public Set<Item> getItems() {
