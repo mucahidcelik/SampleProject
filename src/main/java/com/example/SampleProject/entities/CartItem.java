@@ -14,13 +14,11 @@ public class CartItem {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
     private int quantity;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "cart_id", nullable = false)
     @JsonBackReference
     private Cart cart;
 

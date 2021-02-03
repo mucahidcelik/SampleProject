@@ -20,7 +20,7 @@ public class Cart {
     @JsonBackReference
     private Customer customer;
 
-    @OneToMany(orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<CartItem> cartItemSet;
 

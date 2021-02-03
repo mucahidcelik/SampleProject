@@ -74,6 +74,12 @@ public class CustomerController {
     public ResponseEntity<CustomerDto> deleteCustomer(@RequestHeader(name = "Authorization") String token) {
         Customer customer = customers.findByToken(token);
         if (customer != null) {
+            for(CartItem ci : cartItems.findByCart(customer.getCart())){
+                ci.setCart(null);
+                cartItems.delete(ci);
+            }
+            customer.getCart().setCartItemSet(null);
+            customers.save(customer);
             customers.delete(customer);
             return new ResponseEntity<>(new CustomerDto(customer), HttpStatus.OK);
         }
