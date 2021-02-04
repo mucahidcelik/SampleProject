@@ -146,7 +146,7 @@ public class CustomerController {
     }
 
     @RequestMapping("/placeOrder")
-    public ResponseEntity<Order> placeOrder(@RequestHeader(name = "Authorization") String token) {
+    public ResponseEntity<Order> placeOrder(@RequestParam String paymentMethod, @RequestHeader(name = "Authorization") String token) {
         Customer c = customers.findByToken(token);
         if (c != null) {
             if (c.getCart().getCartItemSet().size() != 0) {
@@ -157,6 +157,7 @@ public class CustomerController {
                 c.getCart().setCartItemSet(new HashSet<>());
                 Order o = c.getCurrentOrder();
                 o.setAddress(c.getAddress());
+                o.setPaymentMethod(paymentMethod);
                 c.addOrder(new Order(c));
                 customers.save(c);
                 return new ResponseEntity<>(o, HttpStatus.OK);

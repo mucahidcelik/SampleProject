@@ -16,6 +16,15 @@ public class Order {
     private boolean currentOrder;
     private boolean latestOrder;
     private String address;
+    private String paymentMethod;
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 
     public String getAddress() {
         return address;
