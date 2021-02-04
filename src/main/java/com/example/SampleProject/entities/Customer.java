@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "customers")
@@ -22,14 +23,20 @@ public class Customer {
     @OneToOne(orphanRemoval = true)
     @JsonManagedReference
     private Cart cart;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "customer")
+    private Set<Order> orders;
 
-    public Customer(Customer customer) {
-        this.name = customer.name;
-        this.password = customer.password;
-        this.address = customer.address;
-        this.token = customer.token;
-        this.loggedIn = customer.loggedIn;
+
+    public Set<Order> getOrders() {
+        return orders;
     }
+
+    public void setOrders(Set<Order> orders) {
+        this.orders = orders;
+    }
+
+
 
     public Customer() {
 
@@ -93,6 +100,39 @@ public class Customer {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Order getCurrentOrder(){
+        for(Order o: orders){
+            if(o.isCurrentOrder()){
+                return o;
+            }
+        }
+        return null;
+    }
+
+    public Order getLatestOrder(){
+        for(Order o: orders){
+            if(o.isLatestOrder()){
+                return o;
+            }
+        }
+        return null;
+    }
+
+    public void addOrder(Order order) {
+        Order current = getCurrentOrder();
+        Order latest = getLatestOrder();
+        if(current!=null){
+            current.setCurrentOrder(false);
+            current.setLatestOrder(true);
+        }
+        if(latest!=null){
+            latest.setLatestOrder(false);
+        }
+        order.setCurrentOrder(true);
+        order.setLatestOrder(false);
+        getOrders().add(order);
     }
 
 }

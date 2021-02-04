@@ -6,8 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "cart_items")
-public class CartItem {
+public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -19,17 +18,11 @@ public class CartItem {
     private int quantity;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JsonBackReference(value = "cart")
-    @JoinColumn(columnDefinition = "bigint", name = "cart_id")
-    private Cart cart;
+    @JsonBackReference(value = "order")
+    private Order order;
 
-    public CartItem() {
-    }
 
-    public CartItem(Item item, Cart cart, int quantity) {
-        this.item = item;
-        this.quantity = quantity;
-        this.cart = cart;
+    public OrderItem() {
     }
 
     public long getId() {
@@ -56,11 +49,11 @@ public class CartItem {
         this.quantity = quantity;
     }
 
-    public Cart getCart() {
-        return cart;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setCart(Cart cart) {
-        this.cart = cart;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }

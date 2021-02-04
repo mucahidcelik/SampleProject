@@ -1,6 +1,5 @@
 package com.example.SampleProject.controllers;
 
-import com.example.SampleProject.dtos.CustomerDto;
 import com.example.SampleProject.dtos.LoginDto;
 import com.example.SampleProject.dtos.SellerDto;
 import com.example.SampleProject.entities.*;
@@ -13,9 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.TreeSet;
 
 @RestController
 public class SellerController {
@@ -54,7 +53,7 @@ public class SellerController {
     public ResponseEntity<SellerDto> register(@RequestBody Seller seller) {
         seller.setToken(TokenUtility.getJWTToken(seller.getName()));
         seller.setLoggedIn(true);
-        seller.setItemSet(new TreeSet<>());
+        seller.setItemSet(new HashSet<>());
         Seller sellerSaveResult = sellers.save(seller);
         return new ResponseEntity<>(new SellerDto(sellerSaveResult), HttpStatus.OK);
     }
@@ -63,7 +62,7 @@ public class SellerController {
     public ResponseEntity<SellerDto> deleteSeller(@RequestHeader(name = "Authorization") String token) {
         Seller seller = sellers.findByToken(token);
         if (seller != null) {
-            for(Item i : items.findBySeller(seller)){
+            for (Item i : items.findBySeller(seller)) {
                 i.setSeller(null);
                 items.delete(i);
             }
@@ -110,18 +109,13 @@ public class SellerController {
     @RequestMapping("/addItem")
     public Item addItem(@RequestBody Item item) {
         Optional<Category> opt = categories.findById(item.getCategory().getId());
-        item.setCategory(null);
-        Item saveResult = items.save(item);
-        if (opt.isPresent()) {
-            Category c = opt.get();
-            saveResult.setCategory(opt.get());
-            if (c.getItems().add(saveResult)) {
-                c.setItems(c.getItems());
-                categories.save(c);
-            }
+        item.setCategory(opt.orElse(null));
+        if (item.getCategory() != null) {
+            item = items.save(item);
+            item.getCategory().getItems().add(item);
+            categories.save(item.getCategory());
         }
-        saveResult = items.save(saveResult);
-        return items.findById(saveResult.getId()).orElse(null);
+        return item;
     }
 
     @RequestMapping("/getAllItems")
@@ -130,16 +124,15 @@ public class SellerController {
     }
 
     @RequestMapping("/deleteItem/{id}")
-    public Item deleteItem(@PathVariable Long id) {
-        Optional<Item> opt = items.findById(id);
-        if (opt.isPresent()) {
-            Item i = opt.get();
+    public ResponseEntity<Item> deleteItem(@PathVariable Long id) {
+        Item i = items.findById(id).orElse(null);
+        if (i != null) {
             Category category = categories.findById(i.getCategory().getId()).get();
             category.getItems().remove(i);
             category.setItems(category.getItems());
             items.delete(i);
-            return i;
+            return new ResponseEntity<>(i, HttpStatus.OK);
         }
-        return null;
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 }

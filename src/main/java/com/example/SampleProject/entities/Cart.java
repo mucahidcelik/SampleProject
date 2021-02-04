@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -21,7 +22,7 @@ public class Cart {
     private Customer customer;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference(value = "cart")
     private Set<CartItem> cartItemSet;
 
     public Cart() {
@@ -29,6 +30,8 @@ public class Cart {
 
     public Cart(Customer customer) {
         this.customer = customer;
+        customer.setCart(this);
+        this.setCartItemSet(new HashSet<>());
     }
 
     public Cart(Cart cart) {
@@ -60,7 +63,4 @@ public class Cart {
         this.cartItemSet = cartItemSet;
     }
 
-    public void emptyCart() {
-
-    }
 }
