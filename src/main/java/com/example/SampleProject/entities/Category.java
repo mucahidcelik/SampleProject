@@ -16,19 +16,19 @@ public class Category {
     @JsonManagedReference(value = "category")
     private Set<Item> items;
 
-    public Set<Item> getItems() {
-        return items;
-    }
-
-    public void setItems(Set<Item> items) {
-        this.items = items;
-    }
-
     public Category() {
     }
 
     public Category(String name, Set<Item> items) {
         this.name = name;
+        this.items = items;
+    }
+
+    public Set<Item> getItems() {
+        return items;
+    }
+
+    public void setItems(Set<Item> items) {
         this.items = items;
     }
 

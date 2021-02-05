@@ -14,7 +14,7 @@ public class SellerDto {
     public SellerDto() {
     }
 
-    public SellerDto(Seller seller){
+    public SellerDto(Seller seller) {
         this.id = seller.getId();
         this.name = seller.getName();
         this.token = seller.getToken();

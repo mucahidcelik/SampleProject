@@ -1,7 +1,5 @@
 package com.example.SampleProject.dtos;
 
-import org.springframework.web.bind.annotation.RequestParam;
-
 public class LoginDto {
     private Long id;
     private String password;

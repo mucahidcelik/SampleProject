@@ -14,6 +14,10 @@ public class Seller {
     private String name;
     private String password;
     private String token;
+    private boolean loggedIn;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "seller")
+    private Set<Item> itemSet;
 
     public Seller() {
     }
@@ -49,14 +53,6 @@ public class Seller {
     public void setLoggedIn(boolean loggedIn) {
         this.loggedIn = loggedIn;
     }
-
-    private boolean loggedIn;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "seller")
-    private Set<Item> itemSet;
-
-
 
     public Set<Item> getItemSet() {
         return itemSet;

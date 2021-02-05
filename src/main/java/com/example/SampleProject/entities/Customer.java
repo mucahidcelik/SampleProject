@@ -28,18 +28,16 @@ public class Customer {
     private Set<Order> orders;
 
 
+    public Customer() {
+
+    }
+
     public Set<Order> getOrders() {
         return orders;
     }
 
     public void setOrders(Set<Order> orders) {
         this.orders = orders;
-    }
-
-
-
-    public Customer() {
-
     }
 
     public String getName() {
@@ -102,18 +100,18 @@ public class Customer {
         this.token = token;
     }
 
-    public Order getCurrentOrder(){
-        for(Order o: orders){
-            if(o.isCurrentOrder()){
+    public Order getCurrentOrder() {
+        for (Order o : orders) {
+            if (o.isCurrentOrder()) {
                 return o;
             }
         }
         return null;
     }
 
-    public Order getLatestOrder(){
-        for(Order o: orders){
-            if(o.isLatestOrder()){
+    public Order getLatestOrder() {
+        for (Order o : orders) {
+            if (o.isLatestOrder()) {
                 return o;
             }
         }
@@ -123,11 +121,11 @@ public class Customer {
     public void addOrder(Order order) {
         Order current = getCurrentOrder();
         Order latest = getLatestOrder();
-        if(current!=null){
+        if (current != null) {
             current.setCurrentOrder(false);
             current.setLatestOrder(true);
         }
-        if(latest!=null){
+        if (latest != null) {
             latest.setLatestOrder(false);
         }
         order.setCurrentOrder(true);

@@ -17,6 +17,19 @@ public class Order {
     private boolean latestOrder;
     private String address;
     private String paymentMethod;
+    @ManyToOne
+    @JsonBackReference(value = "customer")
+    private Customer customer;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "order")
+    private Set<OrderItem> orderItemSet;
+
+    public Order(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Order() {
+    }
 
     public String getPaymentMethod() {
         return paymentMethod;
@@ -42,10 +55,6 @@ public class Order {
         this.latestOrder = latestOrder;
     }
 
-    public void setOrderItemSet(Set<OrderItem> orderItemSet) {
-        this.orderItemSet = orderItemSet;
-    }
-
     public boolean isCurrentOrder() {
         return currentOrder;
     }
@@ -54,26 +63,12 @@ public class Order {
         this.currentOrder = lastOrder;
     }
 
-
     public Set<OrderItem> getOrderItemSet() {
         return orderItemSet;
     }
 
-
-
-    @ManyToOne
-    @JsonBackReference(value = "customer")
-    private Customer customer;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "order")
-    private Set<OrderItem> orderItemSet;
-
-
-    public Order(Customer customer) {
-        this.customer = customer;
-    }
-
-    public Order() {
+    public void setOrderItemSet(Set<OrderItem> orderItemSet) {
+        this.orderItemSet = orderItemSet;
     }
 
     public Customer getCustomer() {
