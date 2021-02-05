@@ -28,14 +28,16 @@ public class OrderService {
         return null;
     }
 
-    public Order cancelOrder(Long orderId, String token) {
+    public Order cancelOrder(Long orderId) {
         Order o = orders.findById(orderId).orElse(null);
         if (o != null) {
-            if (o.getCustomer().getToken().equals(token)) {
-                orders.delete(o);
-                return o;
-            }
+            orders.delete(o);
+            return o;
         }
         return null;
+    }
+
+    public Order findById(Long id){
+        return orders.findById(id).orElse(null);
     }
 }

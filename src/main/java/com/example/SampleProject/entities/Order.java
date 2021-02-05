@@ -17,7 +17,7 @@ public class Order {
     private boolean latestOrder;
     private String address;
     private String paymentMethod;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference(value = "customer")
     private Customer customer;
     @OneToMany(cascade = CascadeType.ALL)

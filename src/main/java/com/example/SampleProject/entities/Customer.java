@@ -23,7 +23,7 @@ public class Customer {
     @OneToOne(orphanRemoval = true)
     @JsonManagedReference
     private Cart cart;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference(value = "customer")
     private Set<Order> orders;
 

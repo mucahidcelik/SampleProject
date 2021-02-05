@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -102,8 +103,14 @@ public class CustomerController {
 
     @RequestMapping("/cancelOrder")
     public ResponseEntity<Order> cancelOrder(@RequestParam Long orderId, @RequestHeader(name = "Authorization") String token) {
-        Order o = orderService.cancelOrder(orderId, token);
+        Order o = customerService.cancelOrder(orderId, token);
         return new ResponseEntity<>(o, o != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+    }
+
+    @RequestMapping("/getCustomersByItem")
+    public ResponseEntity<List<Customer>> getCustomersByItem(@RequestParam Long itemId) {
+        List<Customer> customerList = customerService.getCustomersByItem(itemId);
+        return new ResponseEntity<>(customerList, customerList != null && !customerList.isEmpty() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
 }

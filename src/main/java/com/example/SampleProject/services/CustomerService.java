@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -144,6 +145,24 @@ public class CustomerService {
                 customers.save(c);
                 return o;
             }
+        }
+        return null;
+    }
+
+    public List<Customer> getCustomersByItem(Long itemId) {
+        Item i = itemService.findById(itemId);
+        return customers.findByItem(i);
+    }
+
+    public Order cancelOrder(Long orderId, String token) {
+        Order o = orderService.findById(orderId);
+        if (o != null) {
+
+            Customer customer = customers.findByToken(token);
+            customer.getOrders().remove(o);
+            customers.save(customer);
+            orderService.cancelOrder(orderId);
+            return o;
         }
         return null;
     }
